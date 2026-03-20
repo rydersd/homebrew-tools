@@ -1,4 +1,6 @@
 class ClaudeSync < Formula
+  include Language::Python::Shebang
+
   desc "Sync Claude Code configuration between machines via git"
   homepage "https://github.com/rydersd/claudeTools"
   url "https://github.com/rydersd/claudeTools/archive/refs/tags/v1.0.0.tar.gz"
@@ -9,12 +11,8 @@ class ClaudeSync < Formula
   depends_on "python@3"
 
   def install
-    libexec.install "claude-sync.py"
-
-    (bin/"claude-sync").write <<~EOS
-      #!/bin/bash
-      exec "#{Formula["python@3"].opt_bin}/python3" "#{libexec}/claude-sync.py" "$@"
-    EOS
+    bin.install "claude-sync.py" => "claude-sync"
+    rewrite_shebang detected_python_shebang, bin/"claude-sync"
   end
 
   test do
