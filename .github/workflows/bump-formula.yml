@@ -1,0 +1,56 @@
+name: Bump Formula
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "New tag (e.g. v1.2.3)"
+        required: true
+        type: string
+      sha256:
+        description: "SHA256 of the GitHub release tarball"
+        required: true
+        type: string
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate inputs
+        run: |
+          if [[ ! "${{ inputs.sha256 }}" =~ ^[a-f0-9]{64}$ ]]; then
+            echo "::error::Invalid sha256: ${{ inputs.sha256 }}"
+            exit 1
+          fi
+          if [[ ! "${{ inputs.version }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "::error::Invalid version: ${{ inputs.version }}"
+            exit 1
+          fi
+
+      - name: Update formula
+        run: |
+          FILE="Formula/claude-sync.rb"
+          VERSION="${{ inputs.version }}"
+          SHA256="${{ inputs.sha256 }}"
+
+          # Update url tag reference
+          sed -i "s|refs/tags/v[^\"]*|refs/tags/${VERSION}|" "$FILE"
+
+          # Update sha256
+          sed -i "s|sha256 \"[a-f0-9]*\"|sha256 \"${SHA256}\"|" "$FILE"
+
+          echo "--- Updated formula ---"
+          grep -E 'url|sha256' "$FILE"
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/claude-sync.rb
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Bump claude-sync to ${{ inputs.version }}"
+          git push origin main
