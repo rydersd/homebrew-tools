@@ -3,8 +3,8 @@ class ClaudeSync < Formula
 
   desc "Sync Claude Code configuration between machines via git"
   homepage "https://github.com/rydersd/claudeTools"
-  url "https://github.com/rydersd/claudeTools/archive/refs/tags/v1.1.0"
-  sha256 "e70e7ccad2b10e4f3c712ede30717ff862d8d72af2360d14733278d9b1f07eed"
+  url "https://github.com/rydersd/claudeTools/archive/refs/tags/v1.3.0"
+  sha256 "d1b871b8b2637f98fd1b7f9f1eeb08378b055e25c84c1c8282f081224ac7d0f9"
   license "MIT"
   head "https://github.com/rydersd/claudeTools.git", branch: "main"
 
