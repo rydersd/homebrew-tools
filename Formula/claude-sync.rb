@@ -12,7 +12,9 @@ class ClaudeSync < Formula
 
   def install
     bin.install "claude-sync.py" => "claude-sync"
+    bin.install "claude-sync-mcp.py" => "claude-sync-mcp"
     rewrite_shebang detected_python_shebang, bin/"claude-sync"
+    rewrite_shebang detected_python_shebang, bin/"claude-sync-mcp"
   end
 
   test do
